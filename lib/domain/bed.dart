@@ -51,7 +51,7 @@ class Bed {
   bedStatus status;
   String? patientId;
 
-  Bed(this.id,this.status,this.patientId);
+  Bed(this.id,this.status,[this.patientId]);
 
   void assignPatient(String patientId){
     if (status != bedStatus.Available){
@@ -108,6 +108,10 @@ class Bed {
       break;
     }
     print("Bed $id: $statusText");
+
+
   }
+
+  bool get canbeAssign => status == bedStatus.Available;
 
 }

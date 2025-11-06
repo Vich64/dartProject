@@ -111,6 +111,8 @@
 //   });
 // }
 
+import 'package:hospital_management/domain/patient.dart';
+
 import '../lib/domain/bed.dart';
 import '../lib/domain/room.dart';
 
@@ -144,4 +146,21 @@ void main(){
 
   print("\n ---Final Status--- ");
   room101.displayInfo();
+
+  print("---Patience Testing---");
+  var patient1 = Patient('P001', 'Nuka');
+  var patient2 = Patient('P002','Lebron');
+
+  patient1.displayInfo();
+
+  // var bed1 = Bed('A',bedStatus.Available);
+
+  bed1.assignPatient(patient2.id);
+
+  bed1.displayInfo();
+
+  print("\n---testing bed vacating---");
+  bed1.vacate();
+  bed1.displayInfo();
+
 }

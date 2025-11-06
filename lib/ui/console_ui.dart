@@ -99,3 +99,13 @@
 //   print(prompt);
 //   return stdin.readLineSync() ?? '';
 // }
+
+import 'dart:io';
+import '../domain/bed.dart';
+import '../domain/room.dart';
+import '../domain/patient.dart';
+
+class HospitalManager {
+  List<Room> rooms = [];
+  List<Patient> patients = [];
+}

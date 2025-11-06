@@ -54,6 +54,10 @@ class Room{
     return beds.where((bed) => bed.status == bedStatus.Available).toList();
   }
 
+  List<Bed> getOccupiedBeds(){
+    return beds.where((bed) => bed.status == bedStatus.Occupied).toList();
+  }
+
   //Find beds that are under maintenance
   List<Bed> getUnderMaintenance(){
     return beds.where((bed) => bed.status == bedStatus.Maintenance).toList();
@@ -61,6 +65,10 @@ class Room{
 
   int countAvailableBeds(){
     return getAvaibleBeds().length;
+  }
+
+  int countOccupiedBeds(){
+    return getOccupiedBeds().length;
   }
 
   int countUnderMaintenanceBeds(){
@@ -85,6 +93,17 @@ class Room{
       print(' - Bed ${bed.id}: $status');
     }
     print('Avaible Beds: ${countAvailableBeds()}');
+    print('Bed is occupied: ${countOccupiedBeds()}');
     print('Bed under maintenance: ${countUnderMaintenanceBeds()}');
+  }
+
+  //find specific bed
+
+  Bed? findBed(String bedId){
+    try{
+      return beds.firstWhere((bed) => bed.id == bedId);
+    }catch (e){
+      throw Exception("bed doesn't exist");
+    }
   }
 }
