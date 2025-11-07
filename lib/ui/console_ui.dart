@@ -19,12 +19,11 @@ class HospitalManager {
   void setupSampleData() {
     print('Setting up sample data...');
 
-    // Sample patients
     patients.addAll([
-      Patient('P001', 'Ronaldo'),
-      Patient('P002', 'Messi'),
-      Patient('P003', 'Ryan'),
-      Patient('P004', 'Ghostlin'),
+      Patient('P001', 'Ronaldo', 'Male', DateTime(2024, 1, 15)),
+      Patient('P002', 'Messi', 'Male', DateTime(2024, 1, 20)),
+      Patient('P003', 'Ryan', 'Male', DateTime(2024, 1, 25)),
+      Patient('P004', 'Ghostlin', 'Female', DateTime(2024, 2, 1)),
     ]);
 
     // Sample rooms
@@ -75,28 +74,34 @@ class HospitalManager {
 
 
   void clearConsole() {
-    print('\x1B[2J\x1B[0;0H');
+    if (stdout.supportsAnsiEscapes) {
+      print('\x1B[2J\x1B[0;0H');
+    } else {
+      // Alternative: print multiple newlines
+      for (int i = 0; i < 50; i++) {
+        print('');
+      }
+    }
   }
 
   void showMainMenu() {
     while (true) {
       clearConsole();
       print('=== Hospital Room Management System ===');
-      print('\n=== Main Menu ===');
-      print('1. View all rooms status');
-      print('2. Assign a bed to patient');
-      print('3. Vacate a bed');
-      print('4. Put bed under maintenance');
-      print('5. Complete bed maintenance');
-      print('6. Add new room');
-      print('7. View all patients');
-      print('8. Exit');
-      print('Choose an option (1-8): ');
+      print('1. View All Rooms');
+      print('2. Assign Bed to Patient');
+      print('3. Vacate Bed');
+      print('4. Put Bed Under Maintenance');
+      print('5. Complete Bed Maintenance');
+      print('6. Add New Room');
+      print('7. Add New Patient');
+      print('8. View All Patients');
+      print('9. Exit');
+      print('Choose an option: ');
 
-      String? input = stdin.readLineSync();
-      clearConsole();
+      String? choice = stdin.readLineSync();
 
-      switch (input) {
+      switch (choice) {
         case '1':
           viewAllRooms();
           break;
@@ -116,13 +121,16 @@ class HospitalManager {
           addNewRoom();
           break;
         case '7':
-          viewAllPatients();
+          addNewPatient();
           break;
         case '8':
+          viewAllPatients();
+          break;
+        case '9':
           print('Exiting...');
           return;
         default:
-          print('Invalid option. Please choose 1-8.');
+          print('Invalid option. Please choose 1-9.');
           print('Press enter to continue...');
           stdin.readLineSync();
       }
@@ -131,6 +139,7 @@ class HospitalManager {
 
   //view all room feature
   void viewAllRooms() {
+    clearConsole();
     print('=== ALL ROOMS STATUS ===');
     if (rooms.isEmpty) {
       print('No rooms available.');
@@ -171,6 +180,7 @@ class HospitalManager {
 
   //view all patient feature
   void viewAllPatients() {
+    clearConsole();
     print('=== ALL PATIENTS ===');
     if (patients.isEmpty) {
       print('No patients registered.');
@@ -520,6 +530,62 @@ class HospitalManager {
     }
   }
 
+  void addNewPatient() {
+    clearConsole();
+    print('=== ADD NEW PATIENT ===');
+
+    stdout.write('Enter patient name: ');
+    String? name = stdin.readLineSync();
+    if (name == null || name.isEmpty) {
+      print('Invalid name!');
+      stdin.readLineSync();
+      return;
+    }
+
+    print('Select gender:');
+    print('1. Male');
+    print('2. Female');
+    print('3. Other');
+    stdout.write('Choose (1-3): ');
+    String? genderInput = stdin.readLineSync();
+
+    String gender;
+    switch (genderInput) {
+      case '1':
+        gender = 'Male';
+        break;
+      case '2':
+        gender = 'Female';
+        break;
+      case '3':
+        gender = 'Other';
+        break;
+      default:
+        print('Invalid selection!');
+        stdin.readLineSync();
+        return;
+    }
+
+    String patientId = _generatePatientId();
+    var newPatient = Patient(
+      patientId,
+      name,
+      gender,
+      DateTime.now(),
+    );
+
+    patients.add(newPatient);
+    saveData();
+
+    print('\nPatient added successfully!');
+    print('Patient ID: $patientId');
+    print('Name: $name');
+    print('Gender: $gender');
+    print('Admission Date: ${DateTime.now().toString().split(' ')[0]}');
+    print('Press enter to continue...');
+    stdin.readLineSync();
+  }
+
   Room? _findRoomForBed(Bed targetBed) {
     for (var room in rooms) {
       if (room.beds.contains(targetBed)) {
@@ -532,7 +598,17 @@ class HospitalManager {
   Patient _findPatientById(String id) {
     return patients.firstWhere(
       (patient) => patient.id == id,
-      orElse: () => Patient('Unknown', 'Unknown Patient'),
+      orElse: () => Patient('Unknown', 'Unknown Patient', 'Unknown', DateTime.now()),
     );
+  }
+
+  String _generatePatientId() {
+    if (patients.isEmpty) {
+      return 'P001';
+    }
+    // Extract number from last patient's ID and increment
+    final lastId = patients.last.id;
+    final number = int.parse(lastId.replaceFirst('P', '')) + 1;
+    return 'P${number.toString().padLeft(3, '0')}';
   }
 }
