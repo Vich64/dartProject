@@ -68,4 +68,45 @@ class Bed {
 
   bool get canbeAssign => status == bedStatus.Available;
 
+    // JSON methods:
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'status': _bedStatusToString(status),
+      'patientId': patientId,
+    };
+  }
+
+  factory Bed.fromJson(Map<String, dynamic> json) {
+    return Bed(
+      json['id'],
+      _stringToBedStatus(json['status']),
+      json['patientId'],
+    );
+  }
+
+  static String _bedStatusToString(bedStatus status) {
+    switch (status) {
+      case bedStatus.Available:
+        return 'Available';
+      case bedStatus.Occupied:
+        return 'Occupied';
+      case bedStatus.Maintenance:
+        return 'Maintenance';
+    }
+  }
+
+  static bedStatus _stringToBedStatus(String status) {
+    switch (status) {
+      case 'Available':
+        return bedStatus.Available;
+      case 'Occupied':
+        return bedStatus.Occupied;
+      case 'Maintenance':
+        return bedStatus.Maintenance;
+      default:
+        return bedStatus.Available;
+    }
+  }
+
 }

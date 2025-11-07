@@ -12,9 +12,9 @@ class Room{
     print('Added ${newBed.id} to room $number');
   }
 
-  //AI generated code
+  //AI help with synax
   //Find beds that are available
-  List<Bed> getAvaibleBeds(){
+  List<Bed> getAvailableBeds(){
     return beds.where((bed) => bed.status == bedStatus.Available).toList();
   }
 
@@ -28,7 +28,7 @@ class Room{
   }
 
   int countAvailableBeds(){
-    return getAvaibleBeds().length;
+    return getAvailableBeds().length;
   }
 
   int countOccupiedBeds(){

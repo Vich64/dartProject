@@ -1,3 +1,5 @@
+
+
 class Patient {
   String id;
   String name;
@@ -8,7 +10,7 @@ class Patient {
     print('Patient $id: $name');
   }
 
-  //AI generated code
+  //AI was used to help with syntax
   //store data in json
   Map<String,dynamic> toJson(){
     return {
