@@ -2,14 +2,17 @@ import 'dart:io';
 import '../domain/bed.dart';
 import '../domain/room.dart';
 import '../domain/patient.dart';
+import '../data/hospital_repository.dart';
 
 class HospitalManager {
   List<Room> rooms = [];
   List<Patient> patients = [];
+  Repository repository = Repository();
 
   void start() {
     print('=== Hospital Room Management System ===');
-    setupSampleData();
+    // setupSampleData();
+    loadData();
     showMainMenu();
   }
 
@@ -21,6 +24,7 @@ class HospitalManager {
       Patient('P001', 'Ronaldo'),
       Patient('P002', 'Messi'),
       Patient('P003', 'Ryan'),
+      Patient('P004', 'Ghostlin'),
     ]);
 
     // Sample rooms
@@ -28,6 +32,7 @@ class HospitalManager {
       Room('A001', 'General Ward', [
         Bed('A', bedStatus.Available),
         Bed('B', bedStatus.Available),
+        Bed('C', bedStatus.Available),
       ]),
       Room('A002', 'Private', [
         Bed('A1', bedStatus.Available),
@@ -40,6 +45,34 @@ class HospitalManager {
     print('Sample data ready!');
     print('Created ${patients.length} patients and ${rooms.length} rooms');
   }
+
+
+    //AI generated code 
+    //save data to json file
+    void loadData() {
+    print('Loading data...');
+    
+    // Try to load from files
+    patients = repository.loadPatients();
+    rooms = repository.loadRooms();
+    
+    // If no data exists, create sample data and save it
+    if (patients.isEmpty && rooms.isEmpty) {
+      print('No saved data found. ');
+      setupSampleData();
+      saveData();
+    } else {
+      print('Data loaded successfully!');
+      print('Loaded ${patients.length} patients and ${rooms.length} rooms');
+    }
+  }
+
+  void saveData() {
+    repository.savePatients(patients);
+    repository.saveRooms(rooms);
+    print('Data saved successfully!');
+  }
+
 
   void clearConsole() {
     print('\x1B[2J\x1B[0;0H');
@@ -86,7 +119,7 @@ class HospitalManager {
           viewAllPatients();
           break;
         case '8':
-          print('Thank you for using Hospital Management System!');
+          print('Exiting...');
           return;
         default:
           print('Invalid option. Please choose 1-8.');
@@ -96,6 +129,7 @@ class HospitalManager {
     }
   }
 
+  //view all room feature
   void viewAllRooms() {
     print('=== ALL ROOMS STATUS ===');
     if (rooms.isEmpty) {
@@ -134,6 +168,8 @@ class HospitalManager {
     stdin.readLineSync();
   }
 
+
+  //view all patient feature
   void viewAllPatients() {
     print('=== ALL PATIENTS ===');
     if (patients.isEmpty) {
@@ -158,7 +194,7 @@ class HospitalManager {
       
       var availableBeds = <Bed>[];
       for (var room in rooms) {
-        availableBeds.addAll(room.getAvaibleBeds());
+        availableBeds.addAll(room.getAvailableBeds());
       }
 
       if (availableBeds.isEmpty) {
@@ -220,12 +256,14 @@ class HospitalManager {
         selectedBed.assignPatient(selectedPatient.id);
         print('${selectedPatient.name} assigned to Bed ${selectedBed.id}');
         print('Press enter to continue...');
+        saveData();
         stdin.readLineSync();
         return;
       }
     }
   }
 
+  // patience leave
   void vacateBed() {
     while (true) {
       clearConsole();
@@ -274,10 +312,12 @@ class HospitalManager {
       print('Bed ${selectedBed.id} vacated. ${patient.name} has been discharged.');
       print('Press enter to continue...');
       stdin.readLineSync();
+      saveData();
       return;
     }
   }
 
+  //put bed under maintenance
   void putBedUnderMaintenance() {
     while (true) {
       clearConsole();
@@ -286,7 +326,7 @@ class HospitalManager {
       
       var availableBeds = <Bed>[];
       for (var room in rooms) {
-        availableBeds.addAll(room.getAvaibleBeds());
+        availableBeds.addAll(room.getAvailableBeds());
       }
 
       if (availableBeds.isEmpty) {
@@ -323,10 +363,12 @@ class HospitalManager {
       print('Bed ${selectedBed.id} is now under maintenance.');
       print('Press enter to continue...');
       stdin.readLineSync();
+      saveData();
       return;
     }
   }
 
+  //complete bed maintenance
   void completeMaintenance() {
     while (true) {
       clearConsole();
@@ -372,10 +414,12 @@ class HospitalManager {
       print('Bed ${selectedBed.id} maintenance completed - now available for patients.');
       print('Press enter to continue...');
       stdin.readLineSync();
+      saveData();
       return;
     }
   }
 
+  //add new room
   void addNewRoom() {
     while (true) {
       clearConsole();
@@ -465,6 +509,7 @@ class HospitalManager {
 
       var newRoom = Room(roomNumber, roomType, newBeds);
       rooms.add(newRoom);
+      saveData();
       
       print('\nNew room created successfully!');
       print('Room: $roomNumber ($roomType)');
