@@ -77,7 +77,6 @@ class HospitalManager {
     if (stdout.supportsAnsiEscapes) {
       print('\x1B[2J\x1B[0;0H');
     } else {
-      // Alternative: print multiple newlines
       for (int i = 0; i < 50; i++) {
         print('');
       }
